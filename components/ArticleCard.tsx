@@ -1,20 +1,36 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
-export default function ArticleCard({ article }) {
+type Article = {
+  id: string | number;
+  title: string;
+  ai_summary?: string | null;
+  summary?: string | null;
+  source?: string | null;
+  category?: string | null;
+};
+
+type ArticleCardProps = {
+  article: Article;
+};
+
+export default function ArticleCard({ article }: ArticleCardProps) {
   const router = useRouter();
 
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => router.push(`/articles/${article.id}`)}
+      onPress={() =>
+        router.push({
+          pathname: "/article/[id]",
+          params: { id: String(article.id) },
+        })
+      }
     >
       <Text style={styles.title}>{article.title}</Text>
 
       <Text style={styles.summary} numberOfLines={2}>
-        {article.ai_summary ||
-          article.summary ||
-          "AI summary coming soon…"}
+        {article.ai_summary || article.summary || "AI summary coming soon…"}
       </Text>
 
       <View style={styles.metaRow}>

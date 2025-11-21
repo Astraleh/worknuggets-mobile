@@ -22,12 +22,12 @@ function calculateReadTime(text: string): number {
 }
 
 serve(async () => {
-  const supabaseUrl = Deno.env.get("PROJECT_URL") || Deno.env.get("URL");
-  const serviceKey = Deno.env.get("SERVICE_ROLE_KEY");
+  const supabaseUrl = Deno.env.get("SUPA_URL");
+  const serviceKey = Deno.env.get("SUPA_SECRET_API_KEY");
 
   if (!supabaseUrl || !serviceKey) {
     return new Response(
-      JSON.stringify({ error: "Missing PROJECT_URL or SERVICE_ROLE_KEY" }),
+      JSON.stringify({ error: "Missing SUPABASE_URL or SUPABASE_SECRET_KEY" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

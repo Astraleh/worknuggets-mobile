@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Call Supabase Batch Summarizer
         run: |
-          curl -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/pipeline-summarize-articles-batch" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+          curl -X POST "${{ secrets.SUPA_URL }}/functions/v1/pipeline-summarize-articles-batch" \
+            -H "Authorization: Bearer ${{ secrets.SUPA_SECRET_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{}'

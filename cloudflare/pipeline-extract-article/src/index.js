@@ -12,7 +12,7 @@
 // ---------- Supabase helpers ----------
 
 async function getNextArticle(env) {
-  const url = new URL("/rest/v1/articles", env.SUPABASE_URL);
+  const url = new URL("/rest/v1/articles", env.SUPA_URL);
   url.searchParams.set("select", "id,link,content_status");
   url.searchParams.set("content_status", "eq.pending");
   url.searchParams.set("order", "created_at.asc");
@@ -20,8 +20,8 @@ async function getNextArticle(env) {
 
   const res = await fetch(url.toString(), {
     headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: env.SUPA_SECRET_API_KEY,
+      Authorization: `Bearer ${env.SUPA_SECRET_API_KEY}`,
       Prefer: "return=representation",
     },
   });
@@ -35,14 +35,14 @@ async function getNextArticle(env) {
 }
 
 async function updateArticle(env, id, patch) {
-  const url = new URL("/rest/v1/articles", env.SUPABASE_URL);
+  const url = new URL("/rest/v1/articles", env.SUPA_URL);
   url.searchParams.set("id", `eq.${id}`);
 
   const res = await fetch(url.toString(), {
     method: "PATCH",
     headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: env.SUPA_SECRET_API_KEY,
+      Authorization: `Bearer ${env.SUPA_SECRET_API_KEY}`,
       "Content-Type": "application/json",
       Prefer: "return=representation",
     },
