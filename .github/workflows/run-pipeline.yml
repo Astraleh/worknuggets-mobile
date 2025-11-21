@@ -2,7 +2,7 @@ name: Run Article Pipeline (Every Minute)
 
 on:
   schedule:
-    - cron: "*/1 * * * *"  # every 1 minute
+    - cron: 
   workflow_dispatch:
 
 jobs:
