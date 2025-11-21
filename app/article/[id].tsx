@@ -12,6 +12,12 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { CATEGORY_MAP } from "../../lib/categoryMap";
+import Constants from "expo-constants";
+
+const SUPABASE_URL =
+  Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY =
+  Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 function timeAgo(dateString: string) {
   const date = new Date(dateString);
@@ -30,6 +36,7 @@ export default function ArticleDetail() {
 
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [summarizing, setSummarizing] = useState(false);
 
   const loadArticle = async () => {
     const { data, error } = await supabase
@@ -51,38 +58,62 @@ export default function ArticleDetail() {
     return data;
   };
 
-  useEffect(() => {
-    let interval: any;
+  const callOnDemandSummarizer = async () => {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      console.log("Missing SUPABASE_URL or SUPABASE_ANON_KEY in config");
+      return;
+    }
 
+    try {
+      setSummarizing(true);
+
+      const resp = await fetch(
+        `${SUPABASE_URL}/functions/v1/on-demand-summarize-article`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ article_id: id }),
+        }
+      );
+
+      const json = await resp.json();
+      console.log("On-demand summary response:", json);
+
+      if (!resp.ok || json.error) {
+        console.log("Summary error:", json.error || "Unknown error");
+        return;
+      }
+
+      if (json.ai_summary) {
+        setArticle((prev: any) =>
+          prev ? { ...prev, ai_summary: json.ai_summary } : prev
+        );
+      }
+    } catch (e: any) {
+      console.log("On-demand summarize error:", e.message || e);
+    } finally {
+      setSummarizing(false);
+    }
+  };
+
+  useEffect(() => {
     const init = async () => {
       setLoading(true);
       const art = await loadArticle();
 
-      // If AI summary isn't ready yet, poll DB every few seconds
-      if (art && !art.ai_summary) {
-        interval = setInterval(async () => {
-          const { data } = await supabase
-            .from("articles")
-            .select("ai_summary")
-            .eq("id", id)
-            .single();
-
-          if (data?.ai_summary) {
-            setArticle((prev: any) => ({
-              ...prev,
-              ai_summary: data.ai_summary,
-            }));
-            clearInterval(interval);
-          }
-        }, 2500);
+      // Normal case: ai_summary is already ready from pipeline.
+      // Fallback: if no ai_summary BUT full_content exists, trigger on-demand summarizer once.
+      if (art && !art.ai_summary && art.full_content) {
+        callOnDemandSummarizer();
       }
 
       setLoading(false);
     };
 
     init();
-
-    return () => clearInterval(interval);
   }, [id]);
 
   if (loading && !article) {
@@ -103,7 +134,8 @@ export default function ArticleDetail() {
 
   const summaryText =
     article.ai_summary ||
-    "A short AI-powered summary is being generated…";
+    article.summary ||
+    "A short AI-powered summary will be available soon.";
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 20 }}>
@@ -115,6 +147,12 @@ export default function ArticleDetail() {
       )}
 
       <Text style={styles.summary}>{summaryText}</Text>
+
+      {summarizing && !article.ai_summary && (
+        <Text style={styles.subtleInfo}>
+          Refining this summary in the background…
+        </Text>
+      )}
 
       <TouchableOpacity
         style={[styles.button, { marginTop: 24 }]}
@@ -138,6 +176,11 @@ const styles = StyleSheet.create({
   },
   time: { fontSize: 12, color: "#999", marginBottom: 20 },
   summary: { fontSize: 17, lineHeight: 26, color: "#333", marginTop: 8 },
+  subtleInfo: {
+    marginTop: 8,
+    fontSize: 12,
+    color: "#888",
+  },
   button: {
     paddingVertical: 14,
     backgroundColor: "#000",

@@ -1,4 +1,4 @@
-name: Run Article Pipeline (Every Minute)
+name: Run Summarizer Pipeline
 
 on:
   schedule:
@@ -6,13 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-pipeline:
+  run-summarizer:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Call Supabase Function
+      - name: Call Supabase Batch Summarizer
         run: |
-          curl -X POST \
+          curl -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/pipeline-summarize-articles-batch" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Content-Type: application/json" \
-            https://kujkheijwbxfqixxvvpt.supabase.co/functions/v1/process-articles-batch
+            -d '{}'

@@ -17,7 +17,7 @@ export default function HomeScreen() {
     const { data, error } = await supabase
       .from("articles")
       .select(
-        "id, title, category, source, pub_date, read_time, importance, ai_summary, link"
+        "id, summary, title, category, source, pub_date, read_time, importance, ai_summary, link"
       )
       .order("pub_date", { ascending: false })
       .limit(40);
