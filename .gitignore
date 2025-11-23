@@ -8,6 +8,7 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+.env
 
 # Native
 .kotlin/
@@ -41,3 +42,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Cloudflare Worker
+.dev.vars

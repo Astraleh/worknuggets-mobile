@@ -1,0 +1,44 @@
+{
+  "always_use_browser": [
+    "bloomberg.com",
+    "medium.com",
+    "businessinsider.com",
+    "theverge.com",
+    "nytimes.com",
+    "wired.com",
+    "washingtonpost.com",
+    "substack.com",
+    "techcrunch.com"
+  ],
+  "prefer_html": [
+    "reuters.com",
+    "moneycontrol.com",
+    "cnn.com",
+    "bbc.com",
+    "aljazeera.com",
+    "ndtv.com",
+    "indiatoday.in"
+  ],
+  "blocked": [
+    "facebook.com",
+    "instagram.com",
+    "linkedin.com",
+    "tiktok.com",
+    "youtube.com"
+  ],
+  "never_browser": [
+    "indiatimes.com",
+    "livemint.com"
+  ],
+  "paywalled": [
+    "economist.com",
+    "ft.com",
+    "wsj.com",
+    "theatlantic.com"
+  ],
+  "strict": [
+    "vox.com",
+    "slate.com",
+    "politico.com"
+  ]
+}

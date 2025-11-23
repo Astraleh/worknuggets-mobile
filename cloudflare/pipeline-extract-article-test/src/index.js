@@ -472,13 +472,6 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Disable test endpoints in production
-    if (url.pathname.startsWith("/test")) {
-      return new Response("Test endpoints disabled in production", { 
-        status: 403 
-      });
-    }
-
     // DEBUG endpoint - inspect bindings
     if (url.pathname === "/debug") {
       return new Response(JSON.stringify({
@@ -492,6 +485,20 @@ export default {
       }, null, 2), {
         headers: { "Content-Type": "application/json" }
       });
+    }
+
+    // DIRECT test endpoint (bypasses DO)
+    if (url.pathname === "/test-direct") {
+      const target = url.searchParams.get("url");
+      const decoded = target ? decodeURIComponent(target) : null;
+      return runDirectTest(decoded, env);
+    }
+
+    // Original test endpoint (with DO)
+    if (url.pathname === "/test") {
+      const target = url.searchParams.get("url");
+      const decoded = target ? decodeURIComponent(target) : null;
+      return runTestExtraction(decoded, env);
     }
 
     return new Response("WorkNuggets Extractor - CRON-only endpoint", { status: 200 });

@@ -1,5 +1,5 @@
 {
-  "name": "worknuggets-extractor",
+  "name": "worknuggets-extractor-test", // changed for remote dev testing
   "main": "src/index.js",
   "compatibility_date": "2024-03-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -23,14 +23,18 @@
       }
     ]
   },
+
+  // preview id required for remote dev testing
   "kv_namespaces": [
     {
       "binding": "BROWSER_DAILY_KV",
-      "id": "8277e1e21a4944788cf4d620a898e949"
+      "id": "8277e1e21a4944788cf4d620a898e949",
+      "preview_id": "8de1930374ca47109f1d9750639f88fa" 
     },
     {
       "binding": "BROWSER_CONCURRENCY_KV",
-      "id": "43d9e332a4404d19847cf16b3a00fc2b"
+      "id": "43d9e332a4404d19847cf16b3a00fc2b",
+      "preview_id": "c43bccfa098b409bbde72120ac919a77"
     }
   ]
 }
